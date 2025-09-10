@@ -175,6 +175,7 @@ func (p *Postgres) setTypeArray(q *crud.QueryParam) *crud.QueryParam {
 		}
 
 		q.Znak = strings.ReplaceAll(q.Znak, "?", array) + dataType
+		q.Value = nil
 	}
 	return q
 }
