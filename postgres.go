@@ -193,12 +193,8 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 	if q.ID != nil {
 		params = append(params, q.ID)
 	}
-	m := q.Get()
-	if m == nil {
-		return "", nil
-	}
 	// Заполнение параметры адресной строки
-	for key, value := range m {
+	for key, value := range q.Get() {
 		if key == crud.AllFieldsParamName || key == crud.ExtraParamName {
 			continue
 		}
@@ -208,12 +204,12 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 	}
 
 	// Формирование полей для поиска везде OR
-	if vals, ok := m[crud.AllFieldsParamName]; ok && len(vals) > 0 {
+	if vals, ok := q.Get()[crud.AllFieldsParamName]; ok && len(vals) > 0 {
 		value := vals[0]
 		// Параметр адресной строки *=
 		if q.Filter != nil && len(q.Filter.Fields) > 0 {
 			for _, field := range q.Filter.Fields {
-				if _, ok = m[field]; !ok {
+				if _, ok = q.Get()[field]; !ok {
 					value.Key = field
 					if value.IsQuotes {
 						value.Key = `"` + value.Key + `"::text`
@@ -224,7 +220,7 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 			}
 		} else {
 			for _, column := range columns {
-				if _, ok = m[column]; !ok {
+				if _, ok = q.Get()[column]; !ok {
 					value.Key = column
 					if value.IsQuotes {
 						value.Key = `"` + value.Key + `"::text`
