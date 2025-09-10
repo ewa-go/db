@@ -1,4 +1,4 @@
-module postgres
+module github.com/ewa-go/db
 
 go 1.24
 
