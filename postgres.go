@@ -246,7 +246,7 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 		var v string
 		for i, param := range params {
 			values = append(values, param.Value)
-			var spliter string
+			var spliter, key string
 			if i > 0 {
 				spliter = " and "
 			}
@@ -254,12 +254,12 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 				spliter = " or "
 			}
 			if param.IsQuotes {
-				param.Key = `"` + param.Key + `"`
+				key = `"` + param.Key + `"`
 			}
 			if param.Znak == "like ?" {
-				param.Key += string(param.Type)
+				key += string(param.Type)
 			}
-			v += spliter + strings.Trim(fmt.Sprintf("%s %s", param.Key, param.Znak), " ")
+			v += spliter + strings.Trim(fmt.Sprintf("%s %s", key, param.Znak), " ")
 		}
 		if len(query) > 0 {
 			query += " and " + v
