@@ -107,7 +107,7 @@ func (p *Postgres) setTypeArray(q *crud.QueryParam) *crud.QueryParam {
 			dataType string
 		)
 		switch q.DataType {
-		case "string":
+		default:
 			dataType = "::text[]"
 			if v, ok := q.Value.([]string); ok && len(v) > 0 {
 				array = "'" + strings.Join(v, "','") + "'"
@@ -181,10 +181,7 @@ func (p *Postgres) setTypeArray(q *crud.QueryParam) *crud.QueryParam {
 }
 
 func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, values []any) {
-	var (
-		params []*crud.QueryParam
-		fields []string
-	)
+	var params []*crud.QueryParam
 	// Если нет параметров, то выходим
 	if q.Len() == 0 && q.ID == nil {
 		return "", nil
@@ -205,42 +202,43 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 
 	// Формирование полей для поиска везде OR
 	if vals, ok := q.Get()[crud.AllFieldsParamName]; ok && len(vals) > 0 {
+
 		value := vals[0]
+
+		var fields []string
 		// Параметр адресной строки *=
 		if q.Filter != nil && len(q.Filter.Fields) > 0 {
 			for _, field := range q.Filter.Fields {
 				if _, ok = q.Get()[field]; !ok {
 					value.Key = field
-					if value.IsQuotes {
-						value.Key = `"` + value.Key + `"::text`
-					}
-					fields = append(fields, strings.Trim(fmt.Sprintf("%s %s", value.Key, value.Znak), " "))
-					values = append(values, value.Value)
+					f, v := p.setFields(value)
+					fields = append(fields, f)
+					values = append(values, v)
 				}
 			}
 		} else {
 			for _, column := range columns {
 				if _, ok = q.Get()[column]; !ok {
 					value.Key = column
-					if value.IsQuotes {
-						value.Key = `"` + value.Key + `"::text`
-					}
-					fields = append(fields, strings.Trim(fmt.Sprintf("%s %s", value.Key, value.Znak), " "))
-					values = append(values, value.Value)
+					f, v := p.setFields(value)
+					fields = append(fields, f)
+					values = append(values, v)
 				}
 			}
 		}
-	}
-	if len(fields) > 0 {
-		for i, field := range fields {
-			var spliter string
-			if i < len(fields)-1 {
-				spliter = " or "
+
+		if len(fields) > 0 {
+			for i, field := range fields {
+				var spliter string
+				if i < len(fields)-1 {
+					spliter = " or "
+				}
+				query += field + spliter
 			}
-			query += field + spliter
+			query = "(" + query + ")"
 		}
-		query = "(" + query + ")"
 	}
+
 	// Заполняем строку запроса и значения для неё
 	if len(params) > 0 {
 		var v string
@@ -250,11 +248,23 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 			if i > 0 {
 				spliter = " and "
 			}
-			if param.IsOR {
-				spliter = " or "
-			}
-			if param.IsQuotes {
+			if param.IsQuotes && !param.IsOR {
 				key = `"` + param.Key + `"`
+			} else if param.IsOR {
+				or := " || "
+				keys := strings.Split(param.Key, ",")
+				for j, k := range keys {
+					if param.IsQuotes {
+						key += `"` + strings.Trim(k, " ") + `"`
+					} else {
+						key += strings.Trim(k, " ")
+					}
+					if j < len(keys)-1 {
+						key += or
+					}
+				}
+			} else {
+				key = param.Key
 			}
 			if param.Znak == "like ?" {
 				key += string(param.Type)
@@ -277,6 +287,13 @@ func (p *Postgres) Query(q *crud.QueryParams, columns []string) (query string, v
 	}
 
 	return query, vals
+}
+
+func (p *Postgres) setFields(value *crud.QueryParam) (string, any) {
+	if value.IsQuotes {
+		value.Key = `"` + value.Key + `"::text`
+	}
+	return strings.Trim(fmt.Sprintf("%s %s", value.Key, value.Znak), " "), value.Value
 }
 
 // Cast Приведение переменной к типу данных
