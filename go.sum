@@ -18,10 +18,14 @@ github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 h1:clC1lXBpe2kTj2VHdaI
 github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385/go.mod h1:0vRUJqYpeSZifjYj7uP3BG/gKcuzL9xWVV/Y+cK33KM=
 github.com/ewa-go/crud v0.1.15 h1:DHiab87ZAldXi1rvV5s2zY5mHf531czB7e6ya2omHgY=
 github.com/ewa-go/crud v0.1.15/go.mod h1:TzdZlU6AXyQZRVvl7JRZyX9A+kJ4HXqwOxFEmLgXXpk=
+github.com/ewa-go/crud v0.1.22 h1:v2OlJOozxl7kOpkUxpyLXzhXMvxLLjsVOEp+3o1Uois=
+github.com/ewa-go/crud v0.1.22/go.mod h1:LNDM5JxiIG+x97tUmJPO/67s+nz1VOlJgzFmmti7ym4=
 github.com/ewa-go/ewa v0.0.34 h1:PsWpcYbyi2+32AvbtStz9mwUoOOOloo4qFiGyakPZC4=
 github.com/ewa-go/ewa v0.0.34/go.mod h1:aYIfqMITiCB/nEkLOmydRAPIhLw6WQa6VHn80Z76QQE=
 github.com/ewa-go/ewa v0.0.36 h1:L9Ukuxt9X2YbruDKbWL4OYEsw4LAzwxCd5f8KrsMsvA=
 github.com/ewa-go/ewa v0.0.36/go.mod h1:iepMtZYbj5h45h2zle8mxjMO3MVRcdB0ySj7Z8/o714=
+github.com/ewa-go/ewa v0.0.40 h1:ScVLCFtYhMr57Qf5KvIrX+MwfLL8tccu2n1V+9Jrqhw=
+github.com/ewa-go/ewa v0.0.40/go.mod h1:UBhW3CWUe1XQ3YzuSTg8Yu1KNB69IoF22DHaxfv+pZ0=
 github.com/ewa-go/ewa-fiber v0.0.16 h1:38WU94eqsbcKaIc6AzRpByAZYMx96N8tBPgrRp6iWcs=
 github.com/ewa-go/ewa-fiber v0.0.16/go.mod h1:KKl/2++ksKmQSsfMtsZK1GUB9Q5YHu1HrKHd7VH+VGE=
 github.com/ewa-go/jsonschema v0.5.0 h1:Lmed3fvATHiZF0sGLd2Tn9e2NiFvZebmmxA86i2HgkQ=
